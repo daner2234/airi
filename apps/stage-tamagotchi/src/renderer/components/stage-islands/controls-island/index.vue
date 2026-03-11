@@ -65,12 +65,6 @@ watch(isOutside, (outside) => {
   else {
     stopCollapseTimer()
   }
-}, 1500)
-
-watch(isOutside, (outside) => {
-  if (outside) {
-    startCollapseTimer()
-  } else {
 })
 
 watch(expanded, (isExp) => {
