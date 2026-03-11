@@ -78,27 +78,14 @@ onMounted(async () => {
   analyticsStore.initialize()
   cardStore.initialize()
 
-  // eslint-disable-next-line no-console
-  console.log('[Proactivity] Starting global heartbeat loop (60s tick)...')
-  setInterval(() => {
-    void proactivityStore.evaluateHeartbeat()
-  }, 60 * 1000)
-
-  onboardingStore.initializeSetupCheck()
-
-  await chatSessionStore.initialize()
-  await serverChannelStore.initialize({ possibleEvents: ['ui:configure'] }).catch(err => console.error('Failed to initialize Mods Server Channel in App.vue:', err))
-  await contextBridgeStore.initialize()
-  characterOrchestratorStore.initialize()
-
-  await displayModelsStore.loadDisplayModelsFromIndexedDB()
   await settingsStore.initializeStageModel()
 
-  await settingsStore.initializeStageModel()
+  proactivityStore.startHeartbeatLoop()
 })
 
 onUnmounted(() => {
   contextBridgeStore.dispose()
+  proactivityStore.stopHeartbeatLoop()
 })
 
 // Handle first-time setup events
