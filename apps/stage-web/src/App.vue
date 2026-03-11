@@ -78,6 +78,14 @@ onMounted(async () => {
   analyticsStore.initialize()
   cardStore.initialize()
 
+  onboardingStore.initializeSetupCheck()
+
+  await chatSessionStore.initialize()
+  await serverChannelStore.initialize({ possibleEvents: ['ui:configure'] }).catch(err => console.error('Failed to initialize Mods Server Channel in App.vue:', err))
+  await contextBridgeStore.initialize()
+  characterOrchestratorStore.initialize()
+
+  await displayModelsStore.loadDisplayModelsFromIndexedDB()
   await settingsStore.initializeStageModel()
 
   proactivityStore.startHeartbeatLoop()
