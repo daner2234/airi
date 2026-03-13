@@ -22,10 +22,10 @@ const displayModelStore = useDisplayModelsStore()
 const { displayModelsFromIndexedDBLoading, displayModels } = storeToRefs(displayModelStore)
 
 // Redesign State
-const viewMode = ref<'grid' | 'compact'>('grid')
+const viewMode = ref<'grid' | 'compact'>('compact')
 const searchQuery = ref('')
 const formatFilter = ref<'all' | 'live2d' | 'vrm'>('all')
-const sortBy = ref<'name' | 'date'>('name')
+const sortBy = ref<'name' | 'date'>('date')
 
 const showRenameDialog = ref(false)
 const modelToRename = ref<DisplayModel | null>(null)

@@ -4,6 +4,7 @@ import type { AiriExtension } from '@proj-airi/stage-ui/stores/modules/airi-card
 
 import kebabcase from '@stdlib/string-base-kebabcase'
 
+import { DEFAULT_ARTISTRY_WIDGET_INSTRUCTION } from '@proj-airi/stage-ui/constants/prompts/artistry-instruction'
 import { useAiriCardStore } from '@proj-airi/stage-ui/stores/modules/airi-card'
 import { useArtistryStore } from '@proj-airi/stage-ui/stores/modules/artistry'
 import { useConsciousnessStore } from '@proj-airi/stage-ui/stores/modules/consciousness'
@@ -57,6 +58,7 @@ const selectedSpeechVoiceId = ref<string>('')
 const selectedArtistryProvider = ref<string>('')
 const selectedArtistryModel = ref<string>('')
 const selectedArtistryPromptPrefix = ref<string>('')
+const selectedArtistryWidgetInstruction = ref<string>('')
 const selectedArtistryConfigStr = ref<string>('{\n  \n}')
 
 // Heartbeats configuration
@@ -191,6 +193,7 @@ const tabs: Tab[] = [
   { id: 'identity', label: t('settings.pages.card.creation.identity'), icon: 'i-solar:emoji-funny-square-bold-duotone' },
   { id: 'behavior', label: t('settings.pages.card.creation.behavior'), icon: 'i-solar:chat-round-line-bold-duotone' },
   { id: 'modules', label: t('settings.pages.card.modules'), icon: 'i-solar:widget-4-bold-duotone' },
+  { id: 'artistry', label: t('settings.pages.modules.artistry.title'), icon: 'i-solar:gallery-bold-duotone' },
   { id: 'proactivity', label: t('settings.pages.card.creation.proactivity', 'Proactivity'), icon: 'i-solar:heart-pulse-bold-duotone' },
   { id: 'settings', label: t('settings.pages.card.creation.settings'), icon: 'i-solar:settings-bold-duotone' },
 ]
@@ -299,6 +302,7 @@ function saveCard(card: Card): boolean {
     provider: selectedArtistryProvider.value || defaultArtistryProvider.value,
     model: selectedArtistryModel.value,
     promptPrefix: selectedArtistryPromptPrefix.value,
+    widgetInstruction: selectedArtistryWidgetInstruction.value,
     options: (() => {
       try {
         return selectedArtistryConfigStr.value.trim() ? JSON.parse(selectedArtistryConfigStr.value) : undefined
@@ -339,6 +343,7 @@ function initializeCard(): Card {
   selectedArtistryProvider.value = airiExt?.artistry?.provider || defaultArtistryProvider.value
   selectedArtistryModel.value = airiExt?.artistry?.model || ''
   selectedArtistryPromptPrefix.value = airiExt?.artistry?.promptPrefix || ''
+  selectedArtistryWidgetInstruction.value = airiExt?.artistry?.widgetInstruction || DEFAULT_ARTISTRY_WIDGET_INSTRUCTION
   try {
     selectedArtistryConfigStr.value = airiExt?.artistry?.options ? JSON.stringify(airiExt.artistry.options, null, 2) : '{\n  \n}'
   }
@@ -571,7 +576,15 @@ function getDefaultPlaceholder(defaultValue: string | undefined): string {
                   class="w-full"
                 />
               </div>
+            </div>
+          </div>
+          <!-- Artistry -->
+          <div v-else-if="activeTab === 'artistry'" class="tab-content ml-auto mr-auto w-95%">
+            <p class="mb-3">
+              Configure how AIRI generates images and visual content.
+            </p>
 
+            <div :class="['grid', 'grid-cols-1', 'gap-4', 'ml-auto', 'mr-auto', 'w-90%']">
               <!-- Artistry Provider -->
               <div :class="['flex', 'flex-col', 'gap-2']">
                 <label :class="['flex', 'flex-row', 'items-center', 'gap-2', 'text-sm', 'text-neutral-500', 'dark:text-neutral-400']">
@@ -587,7 +600,7 @@ function getDefaultPlaceholder(defaultValue: string | undefined): string {
               </div>
 
               <!-- Artistry Extra Config -->
-              <div class="col-span-1 mt-4 flex flex-col gap-5 md:col-span-2">
+              <div class="mt-4 flex flex-col gap-5">
                 <FieldInput
                   v-model="selectedArtistryModel"
                   label="Artistry Model (Optional Override)"
@@ -599,6 +612,13 @@ function getDefaultPlaceholder(defaultValue: string | undefined): string {
                   label="Artistry Prompt Default Prefix"
                   description="Pre-pended to every prompt sent to the image generator."
                   placeholder="e.g. Masterpiece, high quality, 1girl, anime,"
+                />
+                <FieldInput
+                  v-model="selectedArtistryWidgetInstruction"
+                  :label="t('settings.pages.modules.artistry.widget-instructions.label')"
+                  :description="t('settings.pages.modules.artistry.widget-instructions.description')"
+                  :single-line="false"
+                  :rows="12"
                 />
                 <FieldInput
                   v-model="selectedArtistryConfigStr"
